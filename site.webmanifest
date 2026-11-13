@@ -1,0 +1,17 @@
+{
+  "name": "GGBond — 童话世界在编超级英雄",
+  "short_name": "GGBond",
+  "description": "8 岁，工龄 20 年。主业拯救世界，副业准点下班。",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#14110f",
+  "theme_color": "#14110f",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
