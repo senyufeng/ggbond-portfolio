@@ -2,6 +2,8 @@
 
 > 8 岁，工龄 20 年。主业拯救世界，副业准点下班。
 
+GitHub 仓库：<https://github.com/senyufeng/ggbond-portfolio>
+
 一个用 **纯 HTML / CSS / JavaScript** 做的个人简历网站，主角是《猪猪侠》里的 GGBond（猪猪侠）。整活向，但视觉和工程都是认真的：艺术馆质感的暗色编辑风、毛玻璃图层、颗粒噪点、手绘 SVG 肖像、滚动显现、可投喂的棒棒糖计数器，以及一份打印出来还算体面的简历。
 
 站点没有任何构建步骤、后端、数据库、Cookie 或第三方统计。推送到 GitHub 后由 **Cloudflare Pages** 自动部署，完全跑在免费额度内。

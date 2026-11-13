@@ -1783,6 +1783,19 @@ main,
   text-align: right;
 }
 
+.footer-build a {
+  color: var(--paper-dim);
+  text-decoration: underline;
+  text-decoration-color: rgba(244, 237, 225, 0.3);
+  text-underline-offset: 3px;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+}
+
+.footer-build a:hover {
+  color: var(--coral);
+  text-decoration-color: var(--coral);
+}
+
 /* --------------------------------------------------------------------------
    Toast + sweet pop
    -------------------------------------------------------------------------- */
