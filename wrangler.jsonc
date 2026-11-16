@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ggbond-portfolio",
+  "compatibility_date": "2026-11-16",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": true,
+  "preview_urls": true
+}

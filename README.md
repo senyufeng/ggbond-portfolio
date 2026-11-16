@@ -2,27 +2,28 @@
 
 > 8 岁，工龄 20 年。主业拯救世界，副业准点下班。
 
-GitHub 仓库：<https://github.com/senyufeng/ggbond-portfolio>
+- GitHub 仓库：<https://github.com/senyufeng/ggbond-portfolio>
+- 线上地址：<https://ggbond-portfolio.uk2023usa2022.workers.dev>
 
 一个用 **纯 HTML / CSS / JavaScript** 做的个人简历网站，主角是《猪猪侠》里的 GGBond（猪猪侠）。整活向，但视觉和工程都是认真的：艺术馆质感的暗色编辑风、毛玻璃图层、颗粒噪点、手绘 SVG 肖像、滚动显现、可投喂的棒棒糖计数器，以及一份打印出来还算体面的简历。
 
-站点没有任何构建步骤、后端、数据库、Cookie 或第三方统计。推送到 GitHub 后由 **Cloudflare Pages** 自动部署，完全跑在免费额度内。
+站点没有任何构建步骤、后端、数据库、Cookie 或第三方统计。推送到 GitHub 后由 **Cloudflare Workers（静态资源模式）** 自动部署，完全跑在免费额度内。Cloudflare 现在推荐新项目使用 Workers + 静态资源，而不是新建 Pages 项目，所以本站最终落在 Workers 上；页面本身仍然是纯静态文件。
 
 ![站点预览](assets/preview.jpg)
 
 ---
 
-## 为什么是 GitHub + Cloudflare Pages
+## 为什么是 GitHub + Cloudflare
 
 | 需求 | 方案 |
 | --- | --- |
 | 代码托管 / 版本管理 | GitHub 公共仓库 |
-| 静态托管 / 全球 CDN | Cloudflare Pages（免费计划） |
-| 自动部署 | Cloudflare 连接 GitHub 仓库，推送到 `main` 即部署 |
+| 静态托管 / 全球 CDN | Cloudflare Workers 静态资源（免费计划） |
+| 自动部署 | Cloudflare Workers Builds 连接 GitHub 仓库，推送到 `main` 即部署 |
 | HTTPS / 自定义域名 | Cloudflare 自动签发证书，支持绑定自己的域名 |
-| 构建成本 | 0。没有构建命令，纯静态文件直接发布 |
+| 构建成本 | 0。没有构建命令，Wrangler 直接上传静态文件 |
 
-> 备选方案：GitHub Pages + Cloudflare DNS 也可以，但 Pages 的 Git 集成、预览部署和 CDN 体验更省心，且同样免费。
+> 备选方案：Cloudflare Pages 也支持同样的 Git 集成；如果更习惯 Pages 的界面，可按文末的 Pages 备选步骤部署。GitHub Pages + Cloudflare DNS 同样可行，但 Workers 的构建与预览体验更省心。
 
 ---
 
@@ -51,12 +52,14 @@ ggbond-portfolio/
 ├─ index.html              # 页面内容与结构（文案都在这里改）
 ├─ styles.css              # 设计系统、布局、响应式、打印样式
 ├─ script.js               # 导航、滚动显现、计数器、光标光晕、肖像微倾斜
-├─ 404.html                # Cloudflare Pages 自定义 404
+├─ 404.html                # Cloudflare Workers 自定义 404
 ├─ favicon.svg             # 站点图标
 ├─ og.png                  # 社交分享图（1200 × 630）
 ├─ site.webmanifest        # PWA / 图标信息
 ├─ robots.txt              # 搜索引擎规则
-├─ _headers                # Cloudflare Pages 安全响应头与缓存策略
+├─ _headers                # Workers 静态资源安全响应头与缓存策略
+├─ wrangler.jsonc          # Workers 配置：名称、静态目录、404 行为
+├─ .assetsignore           # 部署时排除 README / 字体授权文件等
 ├─ assets/
 │  ├─ preview.jpg          # README 预览图
 │  └─ fonts/               # 自托管的 Instrument Serif + DM Mono（OFL）
@@ -65,11 +68,11 @@ ggbond-portfolio/
 
 ---
 
-## 部署到 GitHub + Cloudflare Pages
+## 部署到 GitHub + Cloudflare Workers
 
-### 1. 推到 GitHub
+### 1. 代码在 GitHub
 
-当前目录已经是一个本地 Git 仓库，并完成了首次提交。你只需要在 GitHub 上创建一个**空仓库**（不要勾选 README、.gitignore、License），然后执行：
+当前仓库已经推送到 <https://github.com/senyufeng/ggbond-portfolio>，并完成了首次提交。若从零复现：
 
 > 首次提交使用的是占位身份 `GGBond <ggbond@users.noreply.github.com>`。如果想换成自己的 GitHub 身份，先执行 `git config user.name "你的名字"`、`git config user.email "你的邮箱"`，再执行 `git commit --amend --reset-author --no-edit`。
 
@@ -87,38 +90,46 @@ gh auth login
 gh repo create ggbond-portfolio --public --source=. --remote=origin --push
 ```
 
-### 2. 在 Cloudflare 创建 Pages 项目
+### 2. 连接 Cloudflare Workers Builds
+
+当前项目已经连接完成，以下是从零复现时的步骤：
 
 1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)。
-2. 左侧进入 **Workers & Pages** → **Create application** → **Pages** → **Connect to Git**。
-3. 授权 GitHub，选择 `ggbond-portfolio` 仓库。
-4. 填写项目配置：
-   - **Project name**：`ggbond-portfolio`（或你喜欢的名字）
+2. 左侧进入 **Build → Compute → Workers & Pages → Create application**。
+3. 选择 **Import a repository / GitHub**，授权后选择 `senyufeng/ggbond-portfolio`。
+4. 填写配置：
+   - **Worker name**：`ggbond-portfolio`
    - **Production branch**：`main`
-   - **Framework preset**：`None`
    - **Build command**：留空
-   - **Build output directory**：`/`
-5. 点击 **Save and Deploy**。首次部署通常几秒内完成。
-6. 部署成功后会得到一个 `https://<项目名>.pages.dev` 地址。
+   - **Deploy command**：`npx wrangler deploy`
+   - **Root directory**：留空
+5. 点击 **Save and Deploy**。首次部署通常几十秒内完成。
+6. 成功后地址形如 `https://ggbond-portfolio.<你的 workers.dev 子域>.workers.dev`。
+
+仓库里的 `wrangler.jsonc` 已经固定了 Worker 名称、静态资源目录和自定义 404；`.assetsignore` 会把 README、字体授权文件等排除在上传列表之外。Cloudflare 的自动配置如果询问是否修改设置，保留现有配置即可。
 
 ### 3. 自动部署
 
-Cloudflare Pages 连接仓库后：
+Cloudflare Workers Builds 连接仓库后：
 
 - 每次推送到 `main` → 自动构建并发布到生产环境。
 - 推送到其他分支或发起 Pull Request → 自动生成预览地址，不影响线上。
 - 不需要配置任何 GitHub Secrets 或环境变量。
 
-### 4. 绑定自定义域名（可选）
+### 4. 自定义域名（可选）
 
-在 Pages 项目里进入 **Custom domains** → **Set up a custom domain**：
+在 Worker 项目里进入 **Settings → Domains & Routes → Add → Custom domain**：
 
 - 域名已经托管在 Cloudflare：输入域名，DNS 会自动添加。
-- 域名不在 Cloudflare：按提示到域名商添加 `CNAME`，指向 `<项目名>.pages.dev`。
+- 域名不在 Cloudflare：按提示到域名商添加 `CNAME`，指向 `<Worker 名称>.<workers.dev 子域>.workers.dev`。
 
 HTTPS 证书由 Cloudflare 自动签发和续期。
 
-> 部署后建议把 `index.html` 里的 `og:image` 改成完整地址，例如 `https://你的域名/og.png`，这样社交平台抓取更稳定。
+> `index.html` 里的 canonical、`og:url`、`og:image` 已经指向当前 workers.dev 地址。绑定自定义域名后记得一起替换。
+
+### 如果坚持使用 Cloudflare Pages
+
+Cloudflare 的 Pages 入口在部分新账号里会被收在 **“Looking to deploy Pages? Get started”** 链接下。创建时选择 **Pages → Connect to Git**，构建命令填 `exit 0`，输出目录填 `/`。本项目同样适用，但 Workers 和 Pages 选一种即可，不要重复部署。
 
 ---
 
@@ -130,7 +141,9 @@ HTTPS 证书由 Cloudflare 自动签发和续期。
 | 主色、字体、圆角、间距 | `styles.css` 顶部的 `:root` 变量 |
 | 投喂棒棒糖的文案 | `script.js` 里的 `ordinaryMessages` 和 `milestoneMessages` |
 | 404 页面 | `404.html` |
+| 404 路由行为 | `wrangler.jsonc` 里的 `not_found_handling` |
 | 安全响应头 / 缓存 | `_headers` |
+| 部署配置 / 上传排除 | `wrangler.jsonc`、`.assetsignore` |
 | 社交分享图 | 替换 `og.png`，并同步更新 `og:image` |
 | 预览图 | 替换 `assets/preview.jpg` |
 
