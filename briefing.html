@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>行动简报 — GGBond Tactical</title>
+  <meta name="description" content="GGBond 战术行动简报：CS2 风格的极简部署界面，糖果工厂 A 点与倒计时。">
+  <meta name="author" content="GGBond">
+  <meta name="theme-color" content="#0a0b0c">
+  <meta name="color-scheme" content="dark">
+  <link rel="canonical" href="https://ggbond-portfolio.uk2023usa2022.workers.dev/briefing.html">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/instrument-serif-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="tactical.css">
+  <script>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js');</script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./assets/vendor/three.module.min.js",
+      "three/addons/": "./assets/vendor/"
+    }
+  }
+  </script>
+</head>
+<body class="tac-page" data-screen="briefing">
+  <a class="skip-link" href="#tacMain">跳到主要内容</a>
+  <canvas id="tac-canvas" aria-hidden="true"></canvas>
+  <div class="tac-vignette" aria-hidden="true"></div>
+  <div class="tac-scanlines" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="tac-boot" id="tacBoot" aria-hidden="true">
+    <span class="tac-boot-line"></span>
+    <span>INITIALIZING TACTICAL FEED</span>
+  </div>
+
+  <div class="tac-ui">
+    <header class="tac-topbar">
+      <a class="tac-brand" href="index.html" aria-label="返回 GGBond 主站">
+        <span class="tac-brand-mark">GGB<span>.</span></span>
+        <span class="tac-brand-sub">TACTICAL / 08</span>
+      </a>
+
+      <nav class="tac-tabs" aria-label="展示页导航">
+        <a href="lobby.html">大厅</a>
+        <a href="loading.html">加载</a>
+        <a href="briefing.html" class="is-active" aria-current="page">简报</a>
+        <a href="index.html">主站</a>
+      </nav>
+
+      <div class="tac-user">
+        <span class="tac-online"><i aria-hidden="true"></i>ONLINE</span>
+        <span class="tac-user-name">GGBond</span>
+        <span class="tac-user-level">LVL 08</span>
+      </div>
+    </header>
+
+    <main id="tacMain" class="cs-briefing">
+      <section class="cs-brief-copy" aria-label="任务目标">
+        <p class="cs-kicker">MISSION BRIEFING / 5V5</p>
+        <h1>糖果工厂<br><em>A SITE / 中庭</em></h1>
+        <p class="cs-brief-desc">防守方在 A 点布防，进攻方从 T 出生点推进。拿下中庭，把糖果核心送回撤离点。</p>
+
+        <ol class="cs-objectives">
+          <li><span>01</span><span>控制中庭与 A 点通道，别让对面把糖果偷走。</span></li>
+          <li><span>02</span><span>在 A 点安装糖果核心，守住 40 秒。</span></li>
+          <li><span>03</span><span>护送核心撤离。如果队友在买糖，请耐心等待。</span></li>
+        </ol>
+      </section>
+
+      <aside class="cs-brief-actions" aria-label="展示信息">
+        <p class="cs-brief-site">A SITE / 中庭<br><span>T SPAWN → A SHORT / ROTATION 12s</span></p>
+        <div class="cs-countdown">
+          <span>ROUND TIMER / STATIC</span>
+          <strong id="countdown">00:15</strong>
+        </div>
+        <p class="cs-brief-note">DISPLAY ONLY<br><span>STATIC BRIEFING / NO MATCH FLOW</span></p>
+      </aside>
+    </main>
+
+    <footer class="cs-footer-line">
+      <span><b>TIP</b> 先确认队友都买好了糖，再开始行动。</span>
+      <span>HKG-03 · 28 MS · STABLE</span>
+    </footer>
+  </div>
+
+  <script type="module" src="tactical.js"></script>
+  <script>window.setTimeout(function(){var b=document.getElementById('tacBoot');if(b)b.classList.add('is-hidden');},9000);</script>
+</body>
+</html>

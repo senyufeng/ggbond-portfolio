@@ -8,5 +8,7 @@ LICENSE
 wrangler.jsonc
 .assetsignore
 assets/preview.jpg
+assets/preview-3d.jpg
+assets/preview-tactical.jpg
 assets/fonts/OFL-*.txt
 node_modules

@@ -5,7 +5,7 @@
 - GitHub 仓库：<https://github.com/senyufeng/ggbond-portfolio>
 - 线上地址：<https://ggbond-portfolio.uk2023usa2022.workers.dev>
 
-一个用 **纯 HTML / CSS / JavaScript** 做的个人简历网站，主角是《猪猪侠》里的 GGBond（猪猪侠）。整活向，但视觉和工程都是认真的：艺术馆质感的暗色编辑风、毛玻璃图层、颗粒噪点、手绘 SVG 肖像、滚动显现、可投喂的棒棒糖计数器，以及一份打印出来还算体面的简历。
+一个用 **纯 HTML / CSS / JavaScript** 做的个人简历网站，主角是《猪猪侠》里的 GGBond（猪猪侠）。整活向，但视觉和工程都是认真的：艺术馆质感的暗色编辑风、毛玻璃图层、颗粒噪点、手绘 SVG 肖像、滚动显现、可投喂的棒棒糖计数器、一个可旋转的实时 3D 打印手办展厅、一组 CS2 主菜单风格的静态战术展示页，以及一份打印出来还算体面的简历。
 
 站点没有任何构建步骤、后端、数据库、Cookie 或第三方统计。推送到 GitHub 后由 **Cloudflare Workers（静态资源模式）** 自动部署，完全跑在免费额度内。Cloudflare 现在推荐新项目使用 Workers + 静态资源，而不是新建 Pages 项目，所以本站最终落在 Workers 上；页面本身仍然是纯静态文件。
 
@@ -45,6 +45,53 @@ npx serve .
 
 ---
 
+## 3D 档案馆
+
+![3D 档案馆预览](assets/preview-3d.jpg)
+
+打开 <http://localhost:8000/model.html>（线上：<https://ggbond-portfolio.uk2023usa2022.workers.dev/model.html>）。
+
+`model.html` 是一个实时 WebGL 展厅，不是视频，也不是预渲染图片：
+
+- 拖动旋转、滚轮缩放、自动旋转 / 暂停、重置视角
+- 四套材质：**3D 打印**（默认）、夜行西装、英雄红、奶油玻璃
+- 页面内可下载 **STL**（约 112 mm 高，省略了零厚度的披风曲面；棒棒糖为独立几何体，打印前请在切片软件里检查壁厚和支撑）
+- 全部资源自托管，不依赖外部 CDN；Three.js r180 + OrbitControls + RoomEnvironment + STLExporter
+- 支持 `prefers-reduced-motion`，默认尊重系统的“减少动态效果”设置
+
+### 为什么没有直接下载网上的 GGBond 模型
+
+搜索到的 GGBond 3D 模型主要是粉丝上传到 itch.io、Sketchfab、爱给网等平台的 3D 打印文件，体积多在 45–200 MB，格式以 STL/FBX/GLB 为主，且授权不清晰、常需登录或积分。直接放进公共站点会有版权、加载体积和可用性问题。
+
+所以这里的模型是一个**原创的程序化 3D 打印风格雕像**：头部、耳朵、身体、西装、披风和棒棒糖都由 Three.js 的几何体现场组合，不包含任何官方模型资产。它更轻（页面无需加载模型文件）、更可控，也更适合这个同人整活项目。
+
+### 关于 3MF / STL / CAD
+
+- **STL**：当前提供的下载格式，只包含几何表面，最适合直接丢进切片软件。
+- **3MF**：更适合多材质、多对象和打印参数，但本项目暂时没有导出。
+- **CAD / STEP**：适合参数化工业件，不适合这种有机雕塑造型。
+- **GLB / GLTF**：适合网页和游戏，可保留材质；如果需要，可以后续加一个 GLB 导出。
+
+网页里的“转动”是 Three.js 每帧更新相机/模型变换后的实时渲染；下载的 STL 是静态几何体，不会自带动画。
+
+---
+
+## CS2 风格战术展示页（纯展示）
+
+![战术大厅预览](assets/preview-tactical.jpg)
+
+三个独立的静态展示页，使用 CS2 主菜单那种极简结构，背景是 Three.js 实时渲染的 Dust II 风格沙漠糖果工厂：
+
+- **大厅**：`lobby.html` — 顶部导航 + 左侧大 PLAY + 底部玩家条
+- **加载**：`loading.html` — 静态加载界面，进度固定在 72%
+- **简报**：`briefing.html` — 静态行动简报，倒计时固定在 00:15
+
+页面只做展示：PLAY 不跳转、没有匹配队列、加载不会真的连接服务器、简报没有部署按钮。三个页面之间只有顶部导航，不接入主站导航。
+
+场景是原创的 Dust II-inspired 沙漠地图：沙岩墙、拱门、木箱、油桶、A 点标记、棒棒糖招牌；使用 Three.js 程序化几何 + Canvas 纹理。没有使用 Valve / CS2 的任何模型、贴图或 UI 素材。
+
+---
+
 ## 目录结构
 
 ```text
@@ -52,6 +99,14 @@ ggbond-portfolio/
 ├─ index.html              # 页面内容与结构（文案都在这里改）
 ├─ styles.css              # 设计系统、布局、响应式、打印样式
 ├─ script.js               # 导航、滚动显现、计数器、光标光晕、肖像微倾斜
+├─ model.html              # 3D 档案馆页面
+├─ model.css               # 3D 展厅布局与查看器样式
+├─ model.js                # Three.js 程序化模型、材质、交互与 STL 导出
+├─ lobby.html              # CS2 风格战术大厅（静态展示）
+├─ loading.html            # CS2 风格加载界面（静态展示）
+├─ briefing.html           # CS2 风格行动简报（静态展示）
+├─ tactical.css            # 三张战术展示页的极简 HUD 样式
+├─ tactical.js             # Dust II-inspired 场景与程序化 GGBond 雕像
 ├─ 404.html                # Cloudflare Workers 自定义 404
 ├─ favicon.svg             # 站点图标
 ├─ og.png                  # 社交分享图（1200 × 630）
@@ -61,8 +116,11 @@ ggbond-portfolio/
 ├─ wrangler.jsonc          # Workers 配置：名称、静态目录、404 行为
 ├─ .assetsignore           # 部署时排除 README / 字体授权文件等
 ├─ assets/
-│  ├─ preview.jpg          # README 预览图
-│  └─ fonts/               # 自托管的 Instrument Serif + DM Mono（OFL）
+│  ├─ preview.jpg          # 首页预览图
+│  ├─ preview-3d.jpg       # 3D 档案馆预览图
+│  ├─ preview-tactical.jpg # 战术大厅预览图
+│  ├─ fonts/               # 自托管的 Instrument Serif + DM Mono（OFL）
+│  └─ vendor/              # Three.js r180 + OrbitControls / RoomEnvironment / STLExporter
 └─ README.md
 ```
 
@@ -142,10 +200,15 @@ Cloudflare 的 Pages 入口在部分新账号里会被收在 **“Looking to dep
 | 投喂棒棒糖的文案 | `script.js` 里的 `ordinaryMessages` 和 `milestoneMessages` |
 | 404 页面 | `404.html` |
 | 404 路由行为 | `wrangler.jsonc` 里的 `not_found_handling` |
+| 3D 模型 / 材质 / 交互 | `model.js` |
+| 3D 页面布局 | `model.css`、`model.html` |
+| CS2 展示页布局 | `lobby.html`、`loading.html`、`briefing.html` |
+| 战术场景 / 相机 / 材质 | `tactical.js` |
+| 战术 UI 样式 | `tactical.css` |
 | 安全响应头 / 缓存 | `_headers` |
 | 部署配置 / 上传排除 | `wrangler.jsonc`、`.assetsignore` |
 | 社交分享图 | 替换 `og.png`，并同步更新 `og:image` |
-| 预览图 | 替换 `assets/preview.jpg` |
+| 预览图 | 替换 `assets/preview.jpg` / `assets/preview-3d.jpg` / `assets/preview-tactical.jpg` |
 
 改完直接 `git add . && git commit -m "update content" && git push`，Cloudflare 会自动发布。
 
@@ -170,15 +233,18 @@ Cloudflare 的 Pages 入口在部分新账号里会被收在 **“Looking to dep
 - **交互**：投喂计数器写入 `localStorage`，刷新后保留；点击时飘出棒棒糖并显示随机文案。
 - **无障碍**：语义化结构、跳过导航链接、键盘焦点样式、`aria` 标签、状态提示 `aria-live`。
 - **打印**：点击「打印这份简历」会隐藏装饰和交互，输出一份白底、紧凑的简历版式。
-- **性能**：无框架、无外部请求、字体合计约 70 KB，页面只有 HTML/CSS/JS 与内联 SVG。
+- **3D**：`model.html` 用 Three.js 实时渲染，模型由几何体程序化生成，不加载外部 GLB/STL；支持拖动、缩放、自动旋转、四套物理材质和 STL 导出。
+- **战术展示页**：`tactical.js` 用另一套 Three.js 场景搭建 Dust II-inspired 沙漠糖果工厂（沙岩墙、拱门、木箱、油桶、A 点、棒棒糖招牌），三张页面共享场景，仅切换相机预设和 HUD。
+- **性能**：首页无框架、无外部请求，字体合计约 70 KB；3D 页和战术页按需加载自托管的 Three.js（约 720 KB），没有模型下载和外部 CDN。
 
 ---
 
 ## 免责声明
 
-这是一个**非官方、非商业的同人整活项目**。“猪猪侠 / GG Bond”角色及相关作品版权归广东咏声动漫股份有限公司等权利人所有。本站不使用官方图片、视频或音频；页面中的小猪肖像为原创 SVG 插画，仅用于个人学习与娱乐。如有侵权，请联系删除。
+这是一个**非官方、非商业的同人整活项目**。“猪猪侠 / GG Bond”角色及相关作品版权归广东咏声动漫股份有限公司等权利人所有。本站不使用官方图片、视频或音频；页面中的小猪肖像为原创 SVG 插画，3D 模型为原创程序化几何体，仅用于个人学习与娱乐。如有侵权，请联系删除。
 
 ## License
 
-- 代码（HTML/CSS/JS）与原创插画：MIT，见 [LICENSE](LICENSE)。
+- 代码（HTML/CSS/JS）与原创插画、3D 模型：MIT，见 [LICENSE](LICENSE)。
 - 字体：SIL Open Font License 1.1，见 `assets/fonts/OFL-*.txt`。
+- Three.js：MIT，见 `assets/vendor/three-LICENSE.txt`。
